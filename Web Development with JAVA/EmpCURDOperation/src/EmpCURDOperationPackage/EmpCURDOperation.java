@@ -23,6 +23,7 @@ import java.util.*;  // Contains Scanner class
  * --------------------------------------
  * This class represents one row of the "employee" table in the database.
  * Each object of Employee corresponds to one record in the table.
+ * Database Creation query:- create database kaushikdb
  * Table creation query: - create table employee (empid int primary key, empname varchar(30) not null, empdes varchar(20) not null, empsal float not null);
  */
 class Employee {
