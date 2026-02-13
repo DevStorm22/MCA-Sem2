@@ -125,19 +125,82 @@ public class JDBCCURDOperationWithGUI {
 		return tableFrame;
 	}
 	
-	//Inserting data in the table
-	static ArrayList<Employee> InsertionOfEmployee(int Id, String Name, String Address, String Email, String Contact) {
-		ArrayList<Employee> EmployeeArrayList = new ArrayList<>();
-		String query = "insert into employee value(?, ?, ?, ?, ?)";
-		try {
-			Connection con = DBConnection();
-			PreparedStatement preparedStatement = con.prepareStatement(query);
-		} catch(Exception e) {
-			System.err.print(e);
-		}
+	// GUI frame for entering the data
+	static JFrame dataInsertionForm() {
+		//Declaring the GUI Component
+		JFrame insertionFormFrame = new JFrame("Add employee");
+		JLabel titleLabel,idLabel, nameLabel, addressLabel, emailLabel, contactLabel;
+		JTextField idInput, nameInput, addressInput, emailInput, contactInput;
+		JButton submitButton = new JButton("Submit");
 		
-		// Continue from here
-		return EmployeeArrayList;
+		//Initializing the GUI Component
+		titleLabel = new JLabel("AdInsert Employee Data");
+		idLabel = new JLabel("Enter id:");
+		nameLabel = new JLabel("Enter name:");
+		addressLabel = new JLabel("Enter address:");
+		emailLabel = new JLabel("Enter email:");
+		contactLabel = new JLabel("Enter contact:");
+		idInput = new JTextField();
+		nameInput = new JTextField();
+		addressInput = new JTextField();
+		emailInput = new JTextField();
+		contactInput = new JTextField();
+		
+		//Action Listener to create the Employee
+		submitButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				
+				String query = "insert into employee value(?, ?, ?, ?, ?)";
+
+				try {
+					int Id;
+					String Name, Address, Email, Contact;
+					
+					Id = Integer.parseInt(idInput.getText());
+					Name = nameInput.getText();
+					Address = addressInput.getText();
+					Email = emailInput.getText();
+					Contact = contactInput.getText();
+					
+					Connection con = DBConnection();
+					PreparedStatement preparedStatement = con.prepareStatement(query);
+					preparedStatement.setInt(1, Id);
+					preparedStatement.setString(2, Name);
+					preparedStatement.setString(3, Address);
+					preparedStatement.setString(4, Email);
+					preparedStatement.setString(5, Contact);
+					preparedStatement.executeUpdate();
+					
+					//Alert Message
+					JOptionPane.showMessageDialog(insertionFormFrame, "Employee Added");
+					
+					preparedStatement.close();
+					con.close();
+				} catch(Exception e) {
+					System.err.print(e);
+				}
+			}
+		});
+		
+		//Adding GUI component to the Frame
+		insertionFormFrame.add(titleLabel);
+		insertionFormFrame.add(idLabel);
+		insertionFormFrame.add(idInput);
+		insertionFormFrame.add(nameLabel);
+		insertionFormFrame.add(nameInput);
+		insertionFormFrame.add(addressLabel);
+		insertionFormFrame.add(addressInput);
+		insertionFormFrame.add(emailLabel);
+		insertionFormFrame.add(emailInput);
+		insertionFormFrame.add(contactLabel);
+		insertionFormFrame.add(contactInput);
+		insertionFormFrame.add(submitButton);
+		
+		// Configuring the Frame
+		insertionFormFrame.setLayout(new GridLayout(7, 2));
+		
+		return insertionFormFrame;
 	}
 	
 	// Main Entry point
@@ -146,14 +209,24 @@ public class JDBCCURDOperationWithGUI {
 		EmployeeArrayList = retrieveDataFromDatabase();
 		JFrame mainFrame = new JFrame("JDBC + GUI Demo");
 		JFrame tableFrame = displayingDataInTable(EmployeeArrayList);
+		JFrame insertDataFrame = dataInsertionForm();
 		JButton viewData = new JButton("View Data");
+		JButton insertData = new JButton("Insert Data");
 		
-		// Action listener
+		// Action listeners
 		viewData.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
 				tableFrame.setSize(700, 500);
 				tableFrame.setVisible(true);
+			}
+		});
+		
+		insertData.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				insertDataFrame.setSize(500, 700);
+				insertDataFrame.setVisible(true);
 			}
 		});
 
@@ -162,6 +235,7 @@ public class JDBCCURDOperationWithGUI {
 		
 		// Adding component to the frame
 		mainFrame.add(viewData);
+		mainFrame.add(insertData);
 		
 		//Setting visibility
 		mainFrame.setSize(500, 500);
